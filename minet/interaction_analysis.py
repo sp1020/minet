@@ -1,3 +1,10 @@
+"""
+Interaction Analysis Module
+
+This module evaluates the pairwise interactions of microbes from microbial feature tables. 
+It performs co-occurrence analysis, qualitative assessment of co-occurring microbes, and inference of interaction directionality.
+"""
+
 import argparse
 import logging
 
@@ -20,14 +27,27 @@ parser.add_argument('-o', dest='output', type=str,
 
 
 class Analyzer:
+    """
+    Manages statistical interactions of microbial features from the input microbial feature table.
+    """
+
     def __init__(self):
+        """
+        Initializes the analysis class
+        """
         pass
 
     def load_feature_table(self, filename):
+        """
+        Loads data from the microbial feature table 
+        """
         self.asv_table = pd.read_csv(filename, sep='\t', header=0, index_col=0)
         print(self.asv_table.shape)
 
     def evaluate_feature_association(self, output):
+        """
+        Evaluate the interactions for all microbial interactions 
+        """
         self.output = output
 
         ix_list = self.asv_table.index.values
@@ -68,6 +88,9 @@ class Analyzer:
 
 
 def job_permutation(q_job, q_result):
+    """
+    Executes permutation tests in multi-thread modes
+    """
     while True:
         j = q_job.get()
 
@@ -81,8 +104,8 @@ def job_permutation(q_job, q_result):
                 print(cnt)
 
             oddsratio, pv_fs = cooccurrence.coocurrence(v1, v2)
-            if oddsratio == 0:
-                log_oddsratio = -10
+            if oddsratio == 1:
+                log_oddsratio = 0
             else:
                 log_oddsratio = np.log2(oddsratio)
 
@@ -142,6 +165,9 @@ def job_permutation(q_job, q_result):
 
 
 def contingency_table(a, b):
+    """
+    Creates a contingency table from two presence/absence vectors
+    """
 
     rows = 1 - a
     cols = 1 - b
@@ -153,6 +179,9 @@ def contingency_table(a, b):
 
 
 def ct_info(ct):
+    """
+    Claculates log odds ratio using the contingency table 
+    """
     # pseudo count
     ct += 0.01
 
@@ -163,6 +192,9 @@ def ct_info(ct):
 
 
 def permut_pvalue(val, vs):
+    """
+    Calculates the p-value for an input value (val) based on  the results of the permutation tests.
+    """
     if val > 0:
         cnt = np.sum(vs > val)
     else:

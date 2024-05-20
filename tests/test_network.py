@@ -1,3 +1,7 @@
+"""
+Tests for network representation
+"""
+
 import os
 import logging
 import unittest

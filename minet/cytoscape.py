@@ -1,31 +1,19 @@
 """
-This code convert the conventional graph into CYTOSCAPE format
+This module creates a graph model and converts it into an XGMML format file for visualization in Cytoscape.
 
+Nodes:
+    Each node has a unique "identifier" and "properties".
 
-NODE 
-    Each node has unique "identifier" and "properties"
+    - "identifier": A string that uniquely identifies an individual node.
+    - "properties": A dictionary containing the node's attributes, where keys are Cytoscape properties and values are the corresponding property values.
 
-    "identifier" is a STRING which is uniquely assigned to individual nodes
+Edges:
+    An edge has two node "identifiers" and one set of "properties".
 
-
-    "properties" is a dictionary of variables
-
-    the key will be the cytoscape properties of the node
-    and the value will be the corresponding values for the property
-
-
-EDGE
-
-    An edge will have two node "identifier"s and one "properties"
-
-    As an edge object connect two edge object, the addition of the edge object should be done after the nodes are defined. 
-
-    Otherwise, warning message will be displayed and the edge will not be added to the graph. 
-
-    The identifier should be matched to that of the node
-
-    Similar to node the properties are the directory object
-    with the key for the cytoscape properties and the corresponding values 
+    - An edge object connects two node objects, so edges should be added only after the corresponding nodes are defined.
+    - If an edge is added before defining the nodes, a warning message will be displayed, and the edge will not be added to the graph.
+    - The identifiers must match those of the nodes.
+    - Similar to nodes, edge properties are stored in a dictionary, with keys representing Cytoscape properties and values representing the corresponding property values.
 """
 
 import os
@@ -35,20 +23,41 @@ VERBOSE = True
 
 
 class CytNode:
+    """
+    Represents a node of the interaction network.
+    """
+
     def __init__(self, nid, properties):
+        """
+        Initializes a node with index and node properties (dictionary)
+        """
         self.nid = nid
         self.properties = properties
 
 
 class CytEdge:
+    """
+    Represents an edge of the interaction network.
+    """
+
     def __init__(self, nid1, nid2, properties):
+        """
+        Initializes an edge with index pairs and edge properties (dictionary)
+        """
         self.nid1 = nid1
         self.nid2 = nid2
         self.properties = properties
 
 
 class CytGraph:
+    """
+    Represents an interaction network or graph
+    """
+
     def __init__(self, GraphName='graph'):
+        """
+        Initializes an interaction network or graph
+        """
         self.GraphName = GraphName
         self.Nodes = []
         self.Edges = []
@@ -56,11 +65,15 @@ class CytGraph:
         self.node_set = set()
 
     def print_graph(self):
+        """
+        Prints the graph into XGMML format.
+        """
         line = ''
-        # graph begin
+
+        # The header for the graph
         line += "<graph directed=\"1\" id=\"42\" label=\"%s\" xmlns=\"http://www.cs.rpi.edu/XGMML\">\n" % self.GraphName
 
-        # print node information
+        # Node elements
         for n in self.Nodes:
             if 'label' in n.properties:
                 label = n.properties['label']
@@ -82,7 +95,7 @@ class CytGraph:
 
             line += '</node>\n'
 
-        # print edge information
+        # Edge elements
         for e in self.Edges:
             if 'label' in e.properties:
                 label = e.properties['label']
@@ -105,12 +118,18 @@ class CytGraph:
 
             line += '</edge>\n'
 
-        # graph end
+        # Footer of the graph
         line += "</graph>\n"
 
         return line
 
     def add_node(self, nid, properties):
+        """
+        Adds a node to the graph 
+
+        1. Check the presence of the input node index. 
+        2. Create a new node if not present.  
+        """
         global VERBOSE
 
         j = self.get_node_index(nid)
@@ -120,9 +139,16 @@ class CytGraph:
         else:
             if VERBOSE:
                 print('Warning: the node %s is already present' % nid)
-                print('         the following properties will not be added:', str(properties))
+                print(
+                    '         the following properties will not be added:', str(properties))
 
     def add_edge(self, nid1, nid2, properties):
+        """
+        Adds an edge to the graph
+
+        1. Check the presense of the edge 
+        2. Add a new edge if not present in the graph
+        """
         global VERBOSE
         if nid1 in self.node_set and nid2 in self.node_set:
             j1 = self.get_node_index(nid1)
@@ -134,18 +160,25 @@ class CytGraph:
             else:
                 if VERBOSE:
                     print('Warning: the edge (%s, %s) is found' % (nid1, nid2))
-                    print('         this edge will not be added: (%s, %s)' % (nid1, nid2))
+                    print('         this edge will not be added: (%s, %s)' %
+                          (nid1, nid2))
         else:
             print('Warning: the nodes in the edge not found.')
             print('         this edge will not be added: (%s, %s)' % (nid1, nid2))
 
     def get_node_index(self, nid):
+        """
+        Retrieves the internal node index corresponding to the given node index.
+        """
         for i, n in enumerate(self.Nodes):
             if nid == n.nid:
                 return i
         return -1
 
     def get_edge_index(self, nid1, nid2):
+        """
+        Retrieves the internal edge index corresponding to the given edge indices.
+        """
         for i, e in enumerate(self.Edges):
             if e.nid1 == nid1 and e.nid2 == nid2:
                 return i
@@ -154,26 +187,45 @@ class CytGraph:
 
 
 class CytoscapeXGMML:
+    """
+    Represents an XGMML format graph for visualizaing of the graph using Cytoscape.
+    """
+
     def __init__(self, GraphName='graph'):
+        """
+        Initializes the graph
+        """
         self.Header = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
         self.Graph = CytGraph(GraphName)
 
     def add_node(self, nid, properties={}):
+        """
+        Adds a new node to the graph
+        """
         nid = str(nid)
         self.Graph.add_node(nid, properties)
 
     def add_edge(self, nid1, nid2, properties={}):
+        """
+        Adds a new edge to the graph
+        """
         nid1 = str(nid1)
         nid2 = str(nid2)
         self.Graph.add_edge(nid1, nid2, properties)
 
     def print_graph(self):
+        """
+        Convert graph into XML (text).
+        """
         lines = self.Header[:]
         lines += self.Graph.print_graph()
 
         return lines
 
     def write_graph(self, fn):
+        """
+        Write the graph into a file
+        """
         ls = self.print_graph()
         f = open(fn, 'w')
         f.write(ls)

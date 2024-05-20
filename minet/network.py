@@ -1,3 +1,9 @@
+"""
+Network File Handling Module 
+
+This module parses the association analysis results and creates a microbial interaction network.
+"""
+
 import argparse
 import logging
 
@@ -29,16 +35,21 @@ parser.add_argument('--directionality-p-value', dest='pval_dir', default=0.05, t
 
 
 class Network:
+    """
+    Network analysis class
+    """
+
     def __init__(self) -> None:
+        """
+        Initializes the network analysis object.
+        """
         self.nodes = {}
         self.edges = {}
 
-    def input_by_args(self, args):
-        filename = args.input
-        fdr_co = args.fdr_co
-        fdr_qt = args.fdr_qt
-
     def load_interaction_results(self, filename, fdr_co=0.05, fdr_qt=0.05, co_type='positive', qt_type='positive', pval_dir=0.05):
+        """
+        Loads interaction results and filters interactions
+        """
         association = pd.read_csv(filename, sep='\t')
         idx = association.index[(association['Adjusted-P(Pearson)'] < fdr_qt)
                                 & (association['Adjusted-P(FisherExact)'] < fdr_co)]
@@ -67,12 +78,17 @@ class Network:
 
             if row['P-value(12)'] < pval_dir:
                 e = [ft1, ft2]
-                self.edges[tuple(e)] = {'Rho': row['Rho'], 'LogOddsRatio': row['LogOddsRatio']}
+                self.edges[tuple(e)] = {'Rho': row['Rho'],
+                                        'LogOddsRatio': row['LogOddsRatio']}
             if row['P-value(21)'] < pval_dir:
                 e = [ft2, ft1]
-                self.edges[tuple(e)] = {'Rho': row['Rho'], 'LogOddsRatio': row['LogOddsRatio']}
+                self.edges[tuple(e)] = {'Rho': row['Rho'],
+                                        'LogOddsRatio': row['LogOddsRatio']}
 
     def write_graph(self, filename):
+        """
+        Writes the interactions into a network file.
+        """
         cx = CytoscapeXGMML()
         for n in self.nodes:
             cx.add_node(n, self.nodes[n])

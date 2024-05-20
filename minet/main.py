@@ -1,9 +1,20 @@
+"""
+The main module of the Microbial Interaction Network (MINet) package. 
+
+Sub-commands:
+
+- interaction: Calculates pairwise statistical interactions.
+- network: Creates a network from the statistical analysis results. 
+"""
 import argparse
 from minet import interaction_analysis
 from minet import network
 
 
 def main():
+    """
+    Controls arguments and executes sub-routines 
+    """
     parser = argparse.ArgumentParser(prog='MINet')
     # Refer https://docs.python.org/3/library/argparse.html
 
@@ -28,5 +39,6 @@ def main():
         analyzer.evaluate_feature_association(args.output)
     elif cmd == 'network':
         nt = network.Network()
-        nt.load_interaction_results(args.input, args.fdr_co, args.fdr_qt, args.co_type, args.qt_type, args.pval_dir)
+        nt.load_interaction_results(
+            args.input, args.fdr_co, args.fdr_qt, args.co_type, args.qt_type, args.pval_dir)
         nt.write_graph(args.output)

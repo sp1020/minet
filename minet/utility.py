@@ -1,8 +1,14 @@
+"""
+This module provides utilities for other analyses.
+"""
 
 from multiprocessing import Process, Queue
 
 
 class Manager:
+    """
+    A manager for multi-processing jobs.
+    """
     def __init__(self, f_job, n_worker=1):
         self.n_worker = n_worker
         self.f_job = f_job
