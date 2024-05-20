@@ -9,6 +9,10 @@ dependencies:
   - pandas
   - setuptools
   - build
+  - psutil
+  - scipy
+  - statsmodels
+  - tqdm
   - pip
   - pip:
     - -e ${PACKAGE_PATH}

@@ -18,4 +18,4 @@ dependencies = [
 ]
 
 [project.scripts]
-my-script = "minet.main:main"
+minet = "minet.main:main"
