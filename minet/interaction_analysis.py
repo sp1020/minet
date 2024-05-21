@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from scipy.stats import pearsonr
-from minet import utility, fdr, cooccurrence
+from minet import utility, fdr, cooccurrence, preprocess
 
 # Create a logger
 logger = logging.getLogger(__name__)
@@ -24,6 +24,12 @@ parser.add_argument('-i', dest='input', type=str,
                     help='Input microbial feature table')
 parser.add_argument('-o', dest='output', type=str,
                     help='Output interaction analysis result file')
+parser.add_argument('--depth', dest='depth', type=int, default=10000,
+                    help='Per sample read depth cutoff')
+parser.add_argument('--prevalence', dest='prevalence', type=float, default=0.1,
+                    help='Per ASV prevalence cutoff')
+parser.add_argument('--no-preprocess', dest='no_preprocess', action='store_true', default=False,             
+                    help='User this flag for preprocessed input data')
 
 
 class Analyzer:
@@ -37,12 +43,20 @@ class Analyzer:
         """
         pass
 
-    def load_feature_table(self, filename):
+    def load_feature_table(self, filename, depth=10000, prevalence=0.1, preprocessing=True):
         """
         Loads data from the microbial feature table 
         """
         self.asv_table = pd.read_csv(filename, sep='\t', header=0, index_col=0)
         print(self.asv_table.shape)
+
+        if preprocessing:
+            pr = preprocess.Preprocessor(self.asv_table)
+            pr.undersampling_by_depth(depth)
+            pr.filter_by_prevalence(prevalence)
+
+            self.asv_table = pr.table
+            print(self.asv_table.shape)
 
     def evaluate_feature_association(self, output):
         """

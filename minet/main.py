@@ -35,7 +35,10 @@ def main():
     # Load feature table
     if cmd == 'interaction':
         analyzer = interaction_analysis.Analyzer()
-        analyzer.load_feature_table(args.input)
+        if args.no_preprocess:
+            analyzer.load_feature_table(args.input, depth=args.depth, prevalence=args.prevalence, preprocessing=False)
+        else:
+            analyzer.load_feature_table(args.input, depth=args.depth, prevalence=args.prevalence, preprocessing=True)            
         analyzer.evaluate_feature_association(args.output)
     elif cmd == 'network':
         nt = network.Network()
