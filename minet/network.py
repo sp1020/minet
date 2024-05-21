@@ -18,20 +18,20 @@ logger = logging.getLogger(__name__)
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-i', dest='input', type=str,
                     help='Input result file')
-parser.add_argument('-o', dest='output', type=str,
-                    help='Output network file')
+parser.add_argument('-o', dest='output', type=str, default='network.xml',
+                    help='Output network file (default: %(default)s)')
 parser.add_argument('--fdr-cooccurrence', dest='fdr_co', default=0.05, type=float,
-                    help='FDR of coocurrence analysis')
+                    help='FDR of coocurrence analysis (default: %(default)s)')
 parser.add_argument('--cooccurrence-type', dest='co_type', default='positive', type=str,
-                    help='Association type')
+                    help='Association type (default: %(default)s)')
 
 parser.add_argument('--fdr-quantitative', dest='fdr_qt', default=0.05, type=float,
-                    help='FDR of quantitative analysis (Pearson\'s correlation)')
+                    help='FDR of quantitative analysis (Pearson\'s correlation) (default: %(default)s)')
 parser.add_argument('--quantitative-type', dest='qt_type', default='positive', type=str,
-                    help='Association type')
+                    help='Association type (default: %(default)s)')
 
 parser.add_argument('--directionality-p-value', dest='pval_dir', default=0.05, type=float,
-                    help='Association type')
+                    help='Association type (default: %(default)s)')
 
 
 class Network:

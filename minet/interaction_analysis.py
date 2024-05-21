@@ -25,9 +25,9 @@ parser.add_argument('-i', dest='input', type=str,
 parser.add_argument('-o', dest='output', type=str,
                     help='Output interaction analysis result file')
 parser.add_argument('--depth', dest='depth', type=int, default=10000,
-                    help='Per sample read depth cutoff')
+                    help='Per sample read depth cutoff (default: %(default)s)')
 parser.add_argument('--prevalence', dest='prevalence', type=float, default=0.1,
-                    help='Per ASV prevalence cutoff')
+                    help='Per ASV prevalence cutoff (default: %(default)s)')
 parser.add_argument('--no-preprocess', dest='no_preprocess', action='store_true', default=False,             
                     help='User this flag for preprocessed input data')
 
