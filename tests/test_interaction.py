@@ -21,6 +21,6 @@ class TestInteractionAnalysis(unittest.TestCase):
 
         analyzer = interaction_analysis.Analyzer()
         analyzer.load_feature_table(
-            f'{current_dir}/data/conditional_occurrence_directionality/feature-table.tsv', depth=1000, prevalence=0.5, preprocessing=True)
+            f'{current_dir}/data/conditional_occurrence_directionality/feature-table.tsv', depth=1000, prevalence=0.3, preprocessing=True)
         analyzer.evaluate_feature_association(
             f'{current_dir}/data/conditional_occurrence_directionality/result.tsv')
